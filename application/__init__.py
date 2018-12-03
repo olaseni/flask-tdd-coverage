@@ -23,4 +23,8 @@ def get_app(config=None):
     from . import persistence
     persistence.init(app)
 
+    # blueprints, routes
+    from . import endpoints
+    app.register_blueprint(endpoints.bp)
+
     return app

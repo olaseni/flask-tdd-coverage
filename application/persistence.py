@@ -19,7 +19,7 @@ def get_db():
     return g.db
 
 
-def close_db():
+def close_db(e=None):
     """If this request connected to the database, close the
     connection.
     """
