@@ -1,7 +1,7 @@
 import sqlite3
 from flask import current_app, g
 from flask.cli import with_appcontext
-from click import command
+from click import command, echo
 
 
 def get_db():
@@ -50,7 +50,7 @@ CREATE TABLE person (
   profession TEXT NOT NULL,
   notes TEXT NULL,
   created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  modified TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  modified TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
     ''')
 
@@ -60,6 +60,7 @@ CREATE TABLE person (
 def init_db_command():
     """Clear existing data and create new tables."""
     init_db()
+    echo("Initialized the database ..")
 
 
 def init(app):

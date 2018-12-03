@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, url_for
 
 bp = Blueprint('person', __name__, url_prefix='/person')
 
@@ -16,6 +16,18 @@ def add():
     })
 
 
+@bp.route('/', methods=['GET'])
+def list():
+    """
+    Returns persons
+    :return:
+    """
+    return jsonify([{
+        'id': id,
+        'uri': url_for('person.view', id=id)
+    }])
+
+
 @bp.route('/<int:id>', methods=['GET'])
 def view(id):
     """
@@ -24,11 +36,11 @@ def view(id):
     """
     return jsonify({
         'id': id,
-        'uri': ''
+        'uri': url_for('person.view', id=id)
     })
 
 
-@bp.route('/<int:id>', methods=['GET'])
+@bp.route('/<int:id>', methods=['PUT'])
 def edit(id):
     """
     Updates a person resource

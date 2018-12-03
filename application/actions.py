@@ -2,6 +2,12 @@
 Operations related to managing a person entity
 """
 
+from . import persistence
+
+
+def _cursor():
+    return persistence.get_db().cursor()
+
 
 def add_person(first_name, last_name, email, phone, date_of_birth, address, profession, notes=None):
     """
@@ -16,7 +22,15 @@ def add_person(first_name, last_name, email, phone, date_of_birth, address, prof
     :param notes:
     :return:
     """
-    return 0
+
+    c = _cursor()
+    c.execute(
+        'INSERT INTO person (first_name, last_name, email, phone, date_of_birth, address, profession, notes) '
+        'VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+        (first_name, last_name, email, phone, date_of_birth, address, profession, notes)
+    )
+
+    return c.lastrowid
 
 
 def view_person(id):
@@ -25,7 +39,20 @@ def view_person(id):
     :param id:
     :return:
     """
-    return None
+
+    return _cursor().execute(
+        'SELECT id, first_name, last_name, email, phone, date_of_birth, address, profession, notes '
+        'FROM person WHERE id = ?', (id,)).fetchone()
+
+
+def list_persons():
+    """
+    Returns a list of `person`s from the db
+    """
+
+    return _cursor().execute(
+        'SELECT id, first_name, last_name, email, phone, date_of_birth, address, profession, notes '
+        'FROM person').fetchall()
 
 
 def edit_person(id, first_name, last_name, email, phone, date_of_birth, address, profession, notes=None):
@@ -40,9 +67,13 @@ def edit_person(id, first_name, last_name, email, phone, date_of_birth, address,
     :param address:
     :param profession:
     :param notes:
-    :return:
     """
-    pass
+    _cursor().execute('UPDATE person SET '
+                      ' first_name = ?, last_name = ?, email = ?, phone = ?, '
+                      ' date_of_birth = ?, address = ?, profession = ?, notes = ?, '
+                      ' modified = datetime("now")'
+                      ' WHERE id = ?',
+                      (first_name, last_name, email, phone, date_of_birth, address, profession, notes, id,))
 
 
 def remove_person(id):
@@ -51,4 +82,4 @@ def remove_person(id):
     :param id:
     :return:
     """
-    pass
+    _cursor().execute('DELETE FROM person WHERE id = ?', (id,))
