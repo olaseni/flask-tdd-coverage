@@ -1,4 +1,5 @@
-from flask import Blueprint, jsonify, url_for
+from flask import Blueprint, jsonify, url_for, request
+from . import actions
 
 bp = Blueprint('person', __name__, url_prefix='/person')
 
@@ -10,9 +11,21 @@ def add():
     :return:
     """
 
+    p = request.json
+    pid = actions.add_person(
+        first_name=p['first_name'],
+        last_name=p['last_name'],
+        email=p['email'],
+        phone=p['phone'],
+        date_of_birth=p['date_of_birth'],
+        profession=p['profession'],
+        address=p['address'],
+        notes=p['notes']
+    )
+
     return jsonify({
-        'id': 0,
-        'uri': ''
+        'id': pid,
+        'uri': url_for('person.view', id=pid)
     })
 
 
@@ -22,10 +35,7 @@ def list():
     Returns persons
     :return:
     """
-    return jsonify([{
-        'id': id,
-        'uri': url_for('person.view', id=id)
-    }])
+    return jsonify(actions.list_persons())
 
 
 @bp.route('/<int:id>', methods=['GET'])
@@ -34,10 +44,8 @@ def view(id):
     Returns a person view
     :return:
     """
-    return jsonify({
-        'id': id,
-        'uri': url_for('person.view', id=id)
-    })
+    person = actions.view_person(id)
+    return jsonify(person) if person else jsonify({}), 404
 
 
 @bp.route('/<int:id>', methods=['PUT'])
@@ -46,7 +54,22 @@ def edit(id):
     Updates a person resource
     :return:
     """
-    return None, 204
+    if not actions.view_person(id):
+        return jsonify({}), 404
+
+    p = request.json
+    actions.edit_person(
+        id=id,
+        first_name=p['first_name'],
+        last_name=p['last_name'],
+        email=p['email'],
+        phone=p['phone'],
+        date_of_birth=p['date_of_birth'],
+        profession=p['profession'],
+        address=p['address'],
+        notes=p['notes']
+    )
+    return jsonify({}), 204
 
 
 @bp.route('/<int:id>', methods=['DELETE'])
@@ -55,4 +78,8 @@ def delete(id):
     Deletes a person resource
     :return:
     """
-    return None, 204
+    if not actions.view_person(id):
+        return jsonify({}), 404
+
+    actions.remove_person(id)
+    return jsonify({}), 204
