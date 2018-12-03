@@ -6,3 +6,16 @@
 - Flask
 - Pytest
 - Coverage
+ 
+
+##### Run
+-  make run
+
+##### Test
+-  make test
+
+##### Coverage & Report
+-  make test report
+
+##### HTML Report
+-  make html 
