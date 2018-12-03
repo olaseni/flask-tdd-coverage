@@ -29,6 +29,7 @@ def add_person(first_name, last_name, email, phone, date_of_birth, address, prof
         'VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
         (first_name, last_name, email, phone, date_of_birth, address, profession, notes)
     )
+    persistence.get_db().commit()
 
     return c.lastrowid
 
@@ -78,6 +79,7 @@ def edit_person(id, first_name, last_name, email, phone, date_of_birth, address,
                       ' modified = datetime("now")'
                       ' WHERE id = ?',
                       (first_name, last_name, email, phone, date_of_birth, address, profession, notes, id,))
+    persistence.get_db().commit()
 
 
 def remove_person(id):
@@ -87,3 +89,4 @@ def remove_person(id):
     :return:
     """
     _cursor().execute('DELETE FROM person WHERE id = ?', (id,))
+    persistence.get_db().commit()
