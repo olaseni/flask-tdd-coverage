@@ -40,9 +40,11 @@ def view_person(id):
     :return:
     """
 
-    return _cursor().execute(
+    c = _cursor()
+    person = c.execute(
         'SELECT id, first_name, last_name, email, phone, date_of_birth, address, profession, notes '
         'FROM person WHERE id = ?', (id,)).fetchone()
+    return dict(person) if person else None
 
 
 def list_persons():
@@ -50,9 +52,11 @@ def list_persons():
     Returns a list of `person`s from the db
     """
 
-    return _cursor().execute(
+    c = _cursor()
+    persons = c.execute(
         'SELECT id, first_name, last_name, email, phone, date_of_birth, address, profession, notes '
         'FROM person').fetchall()
+    return [dict(zip([key[0] for key in c.description], person)) for person in persons]
 
 
 def edit_person(id, first_name, last_name, email, phone, date_of_birth, address, profession, notes=None):

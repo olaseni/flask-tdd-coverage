@@ -15,3 +15,10 @@ run-tests:
 tests: clean-pyc run-tests clean-cache
 
 test: tests
+
+
+init-db:
+	flask init-db
+
+run:
+	flask run

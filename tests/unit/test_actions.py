@@ -2,6 +2,8 @@
 Unit tests for actions
 """
 
+from pytest import raises
+from sqlite3 import Error
 from datetime import date
 from application import actions
 
@@ -31,6 +33,9 @@ def test_add_person(app_context):
         assert add_default_person() == 1
         assert len(actions.list_persons()) == 1
         assert actions.view_person(1)['first_name'] == first_name
+        # add invalid
+        with raises(Error):
+            actions.add_person(None, None, None, None, None, None, None)
 
 
 def test_view_person(app_context):
@@ -41,8 +46,6 @@ def test_view_person(app_context):
     """
     with app_context():
         person = actions.view_person(add_default_person())
-        assert first_name in person
-        assert last_name in person
         assert first_name == person['first_name']
         assert last_name == person['last_name']
         assert email == person['email']
